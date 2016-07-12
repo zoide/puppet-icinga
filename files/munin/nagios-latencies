@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+# $Id: nagios-hosts-checks 2199 2009-02-14 17:22:35Z uwaechte $
+
+#author: udo waechter (uwaechte@uos.de), 2009-02-14
+
+#xxxACTSVCLAT         MIN/MAX/AVG active service check latency (ms).
+ #xxxACTSVCEXT         MIN/MAX/AVG active service check execution time (ms).
+ #xxxACTSVCPSC         MIN/MAX/AVG active service check % state change.
+ #xxxPSVSVCLAT         MIN/MAX/AVG passive service check latency (ms).
+ #xxxPSVSVCPSC         MIN/MAX/AVG passive service check % state change.
+ #xxxSVCPSC            MIN/MAX/AVG service check % state change.
+ #xxxACTHSTLAT         MIN/MAX/AVG active host check latency (ms).
+ #xxxACTHSTEXT         MIN/MAX/AVG active host check execution time (ms).
+ #xxxACTHSTPSC         MIN/MAX/AVG active host check % state change.
+ #xxxPSVHSTLAT         MIN/MAX/AVG passive host check latency (ms).
+ #xxxPSVHSTPSC         MIN/MAX/AVG passive host check % state change.
+ #xxxHSTPSC            MIN/MAX/AVG host check % state change.
+
+period = ["MIN","AVG","MAX"]
+
+checks = [] 
+
+["ACTSVCLAT","ACTSVCEXT",
+            "PSVSVCLAT", "ACTHSTLAT","ACTHSTEXT",
+            "PSVHSTLAT"].sort.each do |chk|
+            period.each { |per| checks.push "#{per}#{chk}" }
+               end
+
+checks_join = checks.join(",")               
+
+#config
+if ARGV.include?("config")
+  puts <<EOM
+graph_title Latencies of checks
+graph_category Nagios 
+graph_args  --logarithmic --base 1000 -l 0
+graph_vlabel ms
+EOM
+checks.each do |check|
+  puts "#{check}.label #{check}"
+end  
+exit 0
+end
+
+out = %x{ /usr/sbin/nagios3stats -m -d #{checks_join} }.split("\n")
+cnt = 0
+checks.each do |check|
+    puts "#{check}.value #{out[cnt]}"
+    cnt += 1  
+end        

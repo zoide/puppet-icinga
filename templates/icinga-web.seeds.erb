@@ -1,0 +1,30 @@
+icinga-web icinga-web/app-password-confirm 	password	
+icinga-web icinga-web/database-type			select 		<%= db_servertype %>
+icinga-web icinga-web/db/app-user 			string		<%= db_user %>
+icinga-web icinga-web/dbconfig-install 		boolean 	true
+icinga-web icinga-web/dbconfig-reinstall 	boolean		false
+icinga-web icinga-web/dbconfig-remove		boolean
+icinga-web icinga-web/dbconfig-upgrade 		boolean		true
+icinga-web icinga-web/db/dbname 			string		<%= db_name %>
+icinga-web icinga-web/httpd 				multiselect	<%= webserver %>
+icinga-web icinga-web/internal/skip-preseed boolean		false
+<% if db_servertype == 'mysql' -%>
+icinga-web icinga-web/mysql/admin-pass		password	<%= db_rootpass %>
+icinga-web icinga-web/mysql/admin-user 		string		<%= db_rootuser %>
+icinga-web icinga-web/mysql/app-pass 		password	<%= db_password %>
+icinga-web icinga-web/mysql/method 			select		<%= db_method %>
+<% end -%>
+<% if db_servertype == 'pgsql' -%>
+icinga-web icinga-web/pgsql/admin-pass 		password
+icinga-web icinga-web/pgsql/admin-user 		string		postgres
+icinga-web icinga-web/pgsql/app-pass 		password
+icinga-web icinga-web/pgsql/authmethod-user select 		password
+icinga-web icinga-web/pgsql/changeconf 		boolean		false
+icinga-web icinga-web/pgsql/manualconf		note		
+icinga-web icinga-web/pgsql/method 			select		unix socket
+<% end -%>
+icinga-web icinga-web/purge 				boolean		false
+icinga-web icinga-web/remote/host 			select		<%= db_host %>
+icinga-web icinga-web/remote/newhost 		string		<%= db_host %>
+icinga-web icinga-web/remote/port 			string		<%= db_port %>
+icinga-web icinga-web/rootpassword			password	<%= rootpassword %>

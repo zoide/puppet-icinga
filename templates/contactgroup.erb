@@ -1,0 +1,9 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+define contactgroup {
+  contactgroup_name <%= @contactgroup_name_real %>
+  alias             <%= @contactgroup_alias %>
+  <% if @members != false -%>
+  members           <%= @members %>
+  <% end -%>
+  register          <%= @register %>
+}

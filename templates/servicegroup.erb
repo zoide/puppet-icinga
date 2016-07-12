@@ -1,0 +1,12 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+define servicegroup{
+  servicegroup_name <%= @servicegroup_name_real %>
+<% if @servicegroup_alias != "" -%>
+  alias             <%= @servicegroup_alias %>
+<% end -%>
+<% if @servicegroup_members !="" -%>
+  members           <%= @servicegroup_members %>
+<% end -%>
+  register          <%= @register %>
+}
+#EOF

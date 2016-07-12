@@ -1,0 +1,100 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+define host{
+  host_name                       <%= @name_real %>
+<% if @host_alias != false -%>
+  alias                           <%= @host_alias %>
+<% end -%>
+<% if @template != false -%>
+    name                          <%= @name_real %>
+<% end -%>
+<% if @address != false -%>
+  address                         <%= @address %>
+<% end -%>
+<% if @parents != '' -%>
+  parents                         <%= @parents %>
+<% end -%>
+<% if @hostgroups != '' -%>
+  hostgroups                      <%= [@hostgroups].flatten.join(', ') %>
+<% end -%>
+<% if @use != false -%>
+  use                             <%= @use %>
+<% end -%>
+<% if @check_command != "" -%>
+  check_command                   <%= @check_command %>
+<% end -%>
+<% if @failure_prediction_enabled != false -%>
+  failure_prediction_enabled      <%= @failure_prediction_enabled %>
+<% end -%>
+  max_check_attempts              <%= @max_check_attempts %>
+<% if @check_interval != "" -%>
+  check_interval                  <%= @check_interval %>
+<% end -%>
+<% if @active_checks_enabled != "" -%>
+  active_checks_enabled           <%= @active_checks_enabled %>
+<% end -%>
+<% if @passive_checks_enabled != "" -%>
+  passive_checks_enabled          <%= @passive_checks_enabled %>
+<% end -%>
+  check_period                    <%= @check_period %>
+<% if @obsess_over_host != "" -%>
+  obsess_over_host                <%= @obsess_over_host %>
+<% end -%>
+<% if @check_freshness != "" -%>
+  check_freshness                 <%= @check_freshness %>
+<% end -%>
+<% if @freshness_threshold != "" -%>
+  freshness_threshold             <%= @freshness_threshold %>
+<% end -%>
+<% if @event_handler != "" %>
+  event_handler                   <%= @event_handler %>
+<% end -%>
+<% if @event_handler_enabled != "" -%>
+  event_handler_enabled           <%= @event_handler_enabled %>
+<% end -%>
+<% if @low_flap_threshold != "" -%>
+  low_flap_threshold              <%= @low_flap_threshold %>
+<% end -%>
+<% if @high_flap_threshold != "" -%>
+  high_flap_threshold             <%= @high_flap_threshold %>
+<% end -%>
+<% if @flap_detection_enabled != "" -%>
+  flap_detection_enabled          <%= @flap_detection_enabled %>
+<% end -%>
+<% if @process_perf_data != "" -%>
+  process_perf_data               <%= @process_perf_data %>
+<% end -%>
+<% if @retain_status_information != "" -%>
+  retain_status_information       <%= @retain_status_information %>
+<% end -%>
+<% if @retain_nonstatus_information != "" -%>
+  retain_nonstatus_information    <%= @retain_nonstatus_information %>
+<% end -%>
+<% if @contact_groups != false -%>
+  contact_groups                  <%= @contact_groups %>
+<% end -%>
+  notification_interval           <%= @notification_interval %>
+  notification_period             <%= @notification_period %>
+  notification_options            <%= @notification_options %>
+  notifications_enabled           <%= @notifications_enabled %>
+<% if @stalking_options != "" -%>
+  stalking_options                <%= @stalking_options %>
+<% end -%>
+<% if @register != false -%>
+  register                        <%= @register %>
+<% end -%>
+<% if @first_notification_delay != false -%>
+  first_notification_delay        <%= @first_notification_delay %>
+<% end -%>
+<% if @retry_interval != false -%>
+  retry_interval                  <%= @retry_interval %>
+<% end -%>
+<% if @action_url != false -%>
+  action_url                      <%= @action_url %>
+<% end -%>
+<% if @addfields.is_a?(Hash) -%>
+  #Private fields
+  <% addfields.each_pair do |key, value| -%>
+  <%= key %>                  <%= value %>
+  <% end -%>
+<% end -%>
+}

@@ -1,0 +1,31 @@
+#!/bin/sh
+#author: udo waechter (uwaechte@uos.de), 2008-01-07
+#
+# show stats about monitored hosts by nagios
+#
+# NUMHOSTS
+# NUMHSTUP           number of hosts UP.
+# NUMHSTDOWN         number of hosts DOWN.
+# NUMHSTUNR          number of hosts UNREACHABLE.
+
+case $1 in
+	config)
+	cat <<'EOM'
+graph_title Hosts monitored by nagios
+graph_category Nagios 
+graph_args	--base 1000 -l 0
+graph_vlabel nagios_hosts
+TOTAL.label Total
+UP.label UP
+DOWN.label DOWN
+UNR.label UNREACHABLE
+DWN.label DOWNTIME
+EOM
+	exit 0;;
+esac
+
+echo "TOTAL.value $(/usr/sbin/nagios3stats --data=NUMHOSTS -m)"
+echo "UP.value $(/usr/sbin/nagios3stats --data=NUMHSTUP -m)"
+echo "DOWN.value $(/usr/sbin/nagios3stats --data=NUMHSTDOWN -m)"
+echo "UNR.value $(/usr/sbin/nagios3stats --data=NUMHSTUNR -m)"
+echo "DWN.value $(/usr/sbin/nagios3stats --data=NUMHSTDOWNTIME -m)"

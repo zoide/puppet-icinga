@@ -1,0 +1,39 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+define contact {
+  contact_name                      <%= @contact_name_real %>
+<% if @contact_alias != false -%>
+  alias                             <%= @contact_alias %>
+<% end -%>
+<% if @contact_groups  != false -%> 
+  contactgroups                     <%= @contact_groups %>
+<% end -%>
+  host_notifications_enabled 		<%= @host_notifications_enabled %>
+  service_notifications_enabled     <%= @service_notifications_enabled %>
+<% if @host_notification_period != false -%>
+  host_notification_period          <%= @host_notification_period %>
+<% end -%>
+<% if @service_notification_period != false -%>
+  service_notification_period       <%= @service_notification_period %>
+<% end -%>
+<% if @host_notification_options != false -%>
+  host_notification_options         <%= @host_notification_options %>
+<% end -%>
+<% if @service_notification_options != false -%>
+  service_notification_options      <%= @service_notification_options %>
+<% end -%>
+<% if @host_notification_commands != false -%>
+  host_notification_commands        <%= @host_notification_commands %>
+<% end -%>
+<% if @service_notification_commands != false -%>
+  service_notification_commands     <%= @service_notification_commands %>
+<% end -%>
+<% if @email != false -%>
+  email                             <%= @email %>
+<% end -%>
+<% if @pager  != false -%>
+  pager                             <%= @pager %>
+<% end -%>
+<% if @register != false -%>
+  register                          <%= @register %>
+<% end -%>
+}

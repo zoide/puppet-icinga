@@ -1,0 +1,204 @@
+##PUPPET##
+
+<% if @multiple_values_array !="" -%>
+<%
+  values = [] 
+  if ! @multiple_values_array.is_a?(Array)
+  @multiple_values_array.to_i.downto(1) { |num|
+  values << num.to_s
+  }
+  else
+  values = @multiple_values_array
+  end
+-%>
+<% values.each do |value| -%>
+### value: <%= @value %>
+<% check_command_real = @check_command.gsub("%REPLACE%",@value) %>
+### check_real: <%= @check_command_real %>
+define service {
+    <% if @template != 'false' or @host_name == false or @hostgroup_name == false -%>
+    name                               <%= @name %>
+    <% end -%>
+    <% if @host_name -%>
+    host_name                          <%= @host_name %>
+    <% end -%>
+    <% if @hostgroup_name -%>
+    hostgroup_name                     <%= @hostgroup_name %>
+    <% end -%>
+     <% if @use -%>
+    use                                 <%= @use %>
+    <% end -%>
+    service_description                 <%= @service_description %> <%= @value %>
+  <% if @servicegroups !="" -%>
+    servicegroups                       <%= @servicegroups %>
+  <% end -%>
+  <% if @is_volatile !="" -%>
+    is_volatile                         <%= @is_volatile %>
+  <% end -%>
+    check_command                       <%= @check_command_real %>
+    max_check_attempts                  <%= @max_check_attempts %>
+    normal_check_interval               <%= @normal_check_interval %>
+    retry_check_interval                <%= @retry_check_interval %>
+  <% if @active_checks_enabled !="" -%>
+    active_checks_enabled               <%= @active_checks_enabled %>
+  <% end -%>
+  <% if @passive_checks_enabled !="" -%>
+    passive_checks_enabled              <%= @passive_checks_enabled %>
+  <% end -%>
+    check_period                        <%= @check_period %>
+    parallelize_check                   <%= @parallelize_check %>
+  <% if @obsess_over_service !="" -%>
+    obsess_over_service                 <%= @obsess_over_service %>
+  <% end -%>
+  <% if @check_freshness !="" -%>
+    check_freshness                     <%= @check_freshness %>
+  <% end -%>
+  <% if @freshness_threshold !="" -%>
+    freshness_threshold                 <%= @freshness_threshold %>
+  <% end -%>
+  <% if @event_handler !="" -%>
+    event_handler                       <%= @event_handler %>
+  <% end -%>
+  <% if @event_handler_enabled !="" -%>
+    event_handler_enabled               <%= @event_handler_enabled %>
+  <% end -%>
+  <% if @low_flap_threshold !="" -%>
+    low_flap_threshold                  <%= @low_flap_threshold %>
+  <% end -%>
+  <% if @high_flap_threshold !="" -%>
+    high_flap_threshold                 <%= @high_flap_threshold %>
+  <% end -%>
+  <% if @flap_detection_enabled !="" -%>
+    flap_detection_enabled              <%= @flap_detection_enabled %>
+  <% end -%>
+  <% if @process_perf_data !="" -%>
+    process_perf_data                   <%= @process_perf_data %>
+  <% end -%>
+  <% if @retain_status_information !="" -%>
+    retain_status_information           <%= @retain_status_information %>
+  <% end -%>
+  <% if @retain_nonstatus_information !="" -%>
+    retain_nonstatus_information        <%= @retain_nonstatus_information %>
+  <% end -%>
+    notification_interval               <%= @notification_interval %>
+    notification_period                 <%= @notification_period %>
+    notification_options                <%= @notification_options %>
+    notifications_enabled               <%= @notifications_enabled %>
+    <% if @contact_groups -%>
+    contact_groups                      <%= @contact_groups %>
+    <% end -%>
+  <% if @stalking_options !="" -%>
+    stalking_options                    <%= @stalking_options %>
+  <% end -%>
+}   
+<% end -%>
+<% else -%>
+define service {
+<% if @template != false or @host_name == false or @hostgroup_name == false -%>
+    name                              <%= @name %>
+<% end -%>
+<% if @host_name -%>
+    host_name                         <%= @host_name %>
+<% end -%>
+<% if @hostgroup_name -%>
+    hostgroup_name                    <%= @hostgroup_name %>
+<% end -%>
+    initial_state                     <%= @initial_state %>
+<% if @use -%>
+    use                               <%= @use %>
+<% end -%>
+<% if @service_description -%>
+    service_description               <%= @service_description %>
+<% end -%>
+<% if @servicegroups -%>
+   servicegroups                      <%= @servicegroups %>
+<% end -%>
+<% if @is_volatile -%>
+    is_volatile                       <%= @is_volatile %>
+<% end -%>
+<% if @check_command -%>
+    check_command                     <%= @check_command %>
+<% end -%>
+<% if @max_check_attempts -%>
+    max_check_attempts                <%= @max_check_attempts %>
+<% end -%>
+<% if @normal_check_interval -%>
+    normal_check_interval             <%= @normal_check_interval %>
+<% end -%>
+<% if @retry_check_interval -%>
+    retry_check_interval              <%= @retry_check_interval %>
+<% end -%>
+<% if @active_checks_enabled -%>
+    active_checks_enabled             <%= @active_checks_enabled %>
+<% end -%>
+<% if @passive_checks_enabled -%>
+    passive_checks_enabled            <%= @passive_checks_enabled %>
+<% end -%>
+<% if @check_period -%>
+    check_period                      <%= @check_period %>
+<% end -%>
+<% if @parallelize_check -%>
+    parallelize_check                 <%= @parallelize_check %>
+<% end -%>
+<% if @obsess_over_service -%>
+    obsess_over_service               <%= @obsess_over_service %>
+<% end -%>
+<% if @check_freshness !="" -%>
+    check_freshness                   <%= @check_freshness %>
+<% end -%>
+<% if @freshness_threshold !="" -%>
+    freshness_threshold               <%= @freshness_threshold %>
+<% end -%>
+<% if @event_handler !="" -%>
+    event_handler                     <%= @event_handler %>
+<% end -%>
+<% if @event_handler_enabled !="" -%>
+    event_handler_enabled             <%= @event_handler_enabled %>
+<% end -%>
+<% if @low_flap_threshold !="" -%>
+    low_flap_threshold                <%= @low_flap_threshold %>
+<% end -%>
+<% if @high_flap_threshold !="" -%>
+    high_flap_threshold               <%= @high_flap_threshold %>
+<% end -%>
+<% if @flap_detection_enabled !="" -%>
+    flap_detection_enabled            <%= @flap_detection_enabled %>
+<% end -%>
+<% if @process_perf_data !="" -%>
+    process_perf_data                 <%= @process_perf_data %>
+<% end -%>
+<% if @retain_status_information !="" -%>
+    retain_status_information         <%= @retain_status_information %>
+<% end -%>
+<% if @retain_nonstatus_information !="" -%>
+    retain_nonstatus_information      <%= @retain_nonstatus_information %>
+<% end -%>
+<% if @notification_interval -%>
+    notification_interval             <%= @notification_interval %>
+<% end -%>
+<% if @notification_period -%>
+    notification_period               <%= @notification_period %>
+<% end -%>
+<% if @notification_options -%>
+    notification_options              <%= @notification_options %>
+<% end -%>
+<% if @notifications_enabled -%>
+    notifications_enabled             <%= @notifications_enabled %>
+<% end -%>
+<% if @contact_groups -%>
+    contact_groups                    <%= @contact_groups %>
+<% end -%>
+<% if @stalking_options !="" -%>
+    stalking_options                  <%= @stalking_options %>
+<% end -%>
+<% if @register -%>
+    register                          <%= @register %>
+<% end -%>
+<% if @action_url -%>
+    action_url                        <%= @action_url %>
+<% end -%>
+<% if @failure_prediction_enabled -%>
+    failure_prediction_enabled        <%= @failure_prediction_enabled %>
+<% end -%>
+}
+<% end -%>

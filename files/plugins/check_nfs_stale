@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# NFS stale mounts monitor plugin for Nagios
+# Written by Thomas Sluyter (nagios@kilala.nl)
+# By request of KPN-IS, i-Provide, the Netherlands
+# Last Modified: 13-07-2006
+# 
+# Usage: ./check_nfs_stale
+#
+# Description:
+# This script couldn't be simpler than it is. It just checks to see
+# whether there are any stale NFS mounts present on the system. 
+#
+# Limitations:
+#   This script should work properly on all implementations of Linux, Solaris
+# and Mac OS X.
+#
+# Output:
+# If there are stale NFS mounts, a CRIT is issued.
+#
+
+# You may have to change this, depending on where you installed your
+# Nagios plugins
+PROGNAME="check_nfs_stale"
+PATH="/usr/bin:/usr/sbin:/bin:/sbin"
+if [ $(uname) == "Linux"]; then
+    LIBEXEC="/usr/lib/nagios/plugins"
+else
+    LIBEXEC="/opt/local/libexec/nagios"
+fi
+. $LIBEXEC/utils.sh
+
+
+### REQUISITE NAGIOS COMMAND LINE STUFF ###
+
+print_usage() {
+	echo "Usage: $PROGNAME"
+	echo "Usage: $PROGNAME --help"
+}
+
+print_help() {
+	echo ""
+	print_usage
+	echo ""
+	echo "NFS stale mounts monitor plugin for Nagios"
+	echo ""
+	echo "This plugin not developped by the Nagios Plugin group."
+	echo "Please do not e-mail them for support on this plugin, since"
+	echo "they won't know what you're talking about :P"
+	echo ""
+	echo "For contact info, read the plugin itself..."
+}
+
+while test -n "$1" 
+do
+	case "$1" in
+	  --help) print_help; exit $STATE_OK;;
+	  -h) print_help; exit $STATE_OK;;
+	  *) print_usage; exit $STATE_UNKNOWN;;
+	esac
+done
+
+[ `df -k | grep "Stale NFS file handle" | wc -l` -gt 0 ] && (echo "NOK - Stale NFS mounts."; exit $STATE_CRITICAL)
+
+# Nothing caused us to exit early, so we're okay.
+echo "OK - No stale NFS mounts."
+exit $STATE_OK
+

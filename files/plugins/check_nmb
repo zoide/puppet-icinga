@@ -1,0 +1,133 @@
+#! /usr/bin/perl -w
+# $Id$
+
+
+#
+#
+# check_nmb.pl <host> [warn] [critical] [port]
+#
+# Nagios host script to query Samba's nmb service
+#
+# Changes and Modifications
+# =========================
+# 4-Sep-2006 - Chandler Wilkerson
+#  Created from check_disk_smb.pl script provided with Dag's Nagios rpms,
+#  which was originally created from another script by Michael Anthon :-)
+#  Removed warn and crit parameters, changed over to using nmblookup with
+#  -U option
+
+require 5.004;
+use POSIX;
+use strict;
+use Getopt::Long;
+use vars qw($opt_P $opt_V $opt_h $opt_H $opt_l $verbose);
+use vars qw($PROGNAME);
+use lib "nagios/plugins" ;
+use utils qw($TIMEOUT %ERRORS &print_revision &support &usage);
+
+sub print_help ();
+sub print_usage ();
+
+$PROGNAME = "check_nmb";
+
+$ENV{'PATH'}='';
+$ENV{'BASH_ENV'}=''; 
+$ENV{'ENV'}='';
+
+Getopt::Long::Configure('bundling');
+GetOptions
+	("v"   => \$verbose, "verbose"    => \$verbose,
+	 "P=s" => \$opt_P, "port=s"     => \$opt_P,
+	 "V"   => \$opt_V, "version"    => \$opt_V,
+	 "h"   => \$opt_h, "help"       => \$opt_h,
+         "l=s" => \$opt_l, "lookup=s"   => \$opt_l,
+	 "H=s" => \$opt_H, "hostname=s" => \$opt_H);
+
+if ($opt_V) {
+	print_revision($PROGNAME,'$Revision: 0.1 $'); #'
+	exit $ERRORS{'OK'};
+}
+
+if ($opt_h) {print_help(); exit $ERRORS{'OK'};}
+
+my $nmblookup= "/usr/bin/nmblookup " ;
+my $nmblookupoptions= $opt_P ? "-p $opt_P " : "";
+
+
+# Options checking
+
+($opt_H) || ($opt_H = shift) || usage("Host name not specified\n");
+my $host = $1 if ($opt_H =~ /^([-_.A-Za-z0-9]+\$?)$/);
+($host) || usage("Invalid host: $opt_H\n");
+
+($opt_l) || ($opt_l = shift) || ($opt_l = $host); # lookup self by default
+my $lookup = $1 if ($opt_l =~ /^([-_.A-Za-z0-9]+\$?)$/);
+($host) || usage("Invalid lookup host: $opt_l\n");
+
+# end of options checking
+
+
+my $state = "UNKNOWN";
+my $answer = undef;
+my $res = undef;
+my @lines = undef;
+
+# Just in case of problems, let's not hang Nagios
+$SIG{'ALRM'} = sub { 
+	print "No Answer from Client\n";
+	exit $ERRORS{"UNKNOWN"};
+};
+alarm($TIMEOUT);
+
+# get the results into $res
+$res = qx/$nmblookup -U $host $nmblookupoptions $lookup/;
+print "$nmblookup -U $host $nmblookupoptions $lookup\n" if ($verbose);
+#Turn off alarm
+alarm(0);
+
+#Split $res into an array of lines
+@lines = split /\n/, $res;
+
+#Get the last line into $_
+$answer = $lines[$#lines];
+print "Got $answer\n" if($verbose);
+
+if ($answer =~ /^\d+\.\d+\.\d+\.\d+ $lookup/) {
+  $state = "OK";
+} elsif ($answer =~ /name_query failed to find name/) {
+  $state = "CRITICAL";
+} else {
+  $state = "UNKNOWN";
+  $answer = "Unexpected response: $answer";
+}
+
+print $answer;
+print "$state\n" if ($verbose);
+exit $ERRORS{$state};
+
+sub print_usage () {
+	print "Usage: $PROGNAME -H <host> [-l host to lookup ] [-P <port>]\n";
+}
+
+sub print_help () {
+	print_revision($PROGNAME,'$Revision: 0.1 $');
+	print "Hacked together September 2006 by Chandler Wilkerson
+Modified from check_disk_smb which is Copyright (c) 2000 Michael Anthon/Karl DeBisschop
+
+Perl Check NMB plugin for Nagios
+
+";
+	print_usage();
+	print "
+-H, --hostname=HOST
+   NetBIOS name of the server
+
+-l, --lookup=HOST
+   NetBIOS name to lookup with NMB (defaults to hostname)
+
+-P, --port=INTEGER
+   Port to be used to connect to. Some Windows boxes use 139, others 445 (Defaults to smbclient default)
+   
+";
+	support();
+}

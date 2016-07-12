@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+   ####################
+   ## PUPPET MANAGED ##
+   ####################
+-->
+
+<databases xmlns:db="http://agavi.org/agavi/config/parts/databases/1.0" xmlns:ae="http://agavi.org/agavi/config/global/envelope/1.0">
+    <db:database name="<%= db_name %>" class="AppKitDoctrineDatabase">
+        <ae:parameter name="dsn"><%= db_servertype %>://<%= db_user %>:<%= db_password %>@<%= db_host %>/<%= db_name %></ae:parameter>
+    </db:database>
+</databases>

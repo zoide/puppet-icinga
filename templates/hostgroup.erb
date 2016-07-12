@@ -1,0 +1,23 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+define hostgroup{
+	hostgroup_name    <%= @hostgroup_name_real %>
+	alias             <%= @hostgroup_alias_real %>
+<% if @members -%>
+	members           <%= [@members].flatten.join(', ') %>
+<% end -%>
+<% if @hostgroup_members -%>
+	hostgroup_members <%= [@hostgroup_members].flatten.join(', ') %>
+<% end -%>
+<% if @register -%>
+    register          <%= @register %>
+<% end -%>
+<% if @notes -%>
+    notes          <%= @notes %>
+<% end -%>
+<% if @notes_url -%>
+    notes_url          <%= @notes_url %>
+<% end -%>
+<% if @action_url -%>
+    action_url          <%= @action_url %>
+<% end -%>
+}

@@ -1,0 +1,36 @@
+##       MANAGED BY PUPPET, CHANGES WILL BE OVERWRITTEN           ##
+<% if @multiple_values_array !="" -%>
+<%
+  values = [] 
+  if ! @multiple_values_array.is_a?(Array) 
+  @multiple_values_array.to_i.downto(1) { |num|
+  values << num.to_s
+  }
+  else
+  values = @multiple_values_array
+  end
+-%>
+<% values.each do |value| -%>
+### value: <%= value %>
+define servicedependency{
+  dependent_host_name           <%= @host_name %>
+  dependent_service_description <%= @dependent_service_description %>
+  host_name                     <%= @host_name %>
+  service_description           <%= @service_description %> <%= value %>
+  inherits_parent               <%= @inherits_parent %>
+  execution_failure_criteria    <%= @execution_failure_criteria %>
+  notification_failure_criteria <%= @notification_failure_criteria %>
+}
+<% end -%>
+<% else -%>
+define servicedependency{
+  dependent_host_name           <%= @host_name %>
+  dependent_service_description <%= @dependent_service_description %>
+  host_name                     <%= @host_name %>
+  service_description           <%= @service_description %>
+  inherits_parent               <%= @inherits_parent %>
+  execution_failure_criteria    <%= @execution_failure_criteria %>
+  notification_failure_criteria <%= @notification_failure_criteria %>
+}
+<% end -%>
+#EOF
