@@ -1,3 +1,9 @@
+
+
+
+########### PUPPET MANAGED, ALL CHANGES WILL BE OVERWRITTEN#################
+
+
 #############################################################################
 # Sample NRPE Config File 
 # Written by: Ethan Galstad (nagios@nagios.org)
@@ -10,53 +16,37 @@
 # from which the check_nrpe client is being executed.
 #############################################################################
 
-
 # PID FILE
 # The name of the file in which the NRPE daemon should write it's process ID
 # number.  The file is only written if the NRPE daemon is started by the root
 # user and is running in standalone mode.
-
 pid_file=/var/run/nagios/nrpe.pid
-
-
 
 # PORT NUMBER
 # Port number we should wait for connections on.
 # NOTE: This must be a non-priviledged port (i.e. > 1024).
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
-
 server_port=5666
-
-
 
 # SERVER ADDRESS
 # Address that nrpe should bind to in case there are more than one interface
 # and you do not want nrpe to bind on all interfaces.
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
-
 server_address=0.0.0.0
-
-
 
 # NRPE USER
 # This determines the effective user that the NRPE daemon should run as.  
 # You can either supply a username or a UID.
 # 
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
-
-nrpe_user=<%= @nagios_user %>
-
-
+nrpe_user=<%= scope.lookupvar('icinga::params::nagios_user') %>
 
 # NRPE GROUP
 # This determines the effective group that the NRPE daemon should run as.  
 # You can either supply a group name or a GID.
 # 
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
-
-nrpe_group=<%= @nagios_group %>
-
-
+nrpe_group=<%= scope.lookupvar('icinga::params::nagios_group') %>
 
 # ALLOWED HOST ADDRESSES
 # This is an optional comma-delimited list of IP address or hostnames 
@@ -68,10 +58,7 @@ nrpe_group=<%= @nagios_group %>
 # you are running this daemon on.
 #
 # NOTE: This option is ignored if NRPE is running under either inetd or xinetd
-
 allowed_hosts=127.0.0.1,<%= scope.lookupvar("icinga_host") %>
- 
-
 
 # COMMAND ARGUMENT PROCESSING
 # This option determines whether or not the NRPE daemon will allow clients
@@ -84,10 +71,7 @@ allowed_hosts=127.0.0.1,<%= scope.lookupvar("icinga_host") %>
 # of enabling this variable.
 #
 # Values: 0=do not allow arguments, 1=allow command arguments
-
 dont_blame_nrpe=1
-
-
 
 # COMMAND PREFIX
 # This option allows you to prefix all commands with a user-defined string.
@@ -105,27 +89,18 @@ dont_blame_nrpe=1
 # This lets the nagios user run all commands in that directory (and only them)
 # without asking for a password.  If you do this, make sure you don't give
 # random users write access to that directory or its contents!
-
 # command_prefix=/usr/bin/sudo 
-
-
 
 # DEBUGGING OPTION
 # This option determines whether or not debugging messages are logged to the
 # syslog facility.
 # Values: 0=debugging off, 1=debugging on
-
 debug=0
-
-
 
 # COMMAND TIMEOUT
 # This specifies the maximum number of seconds that the NRPE daemon will
 # allow plugins to finish executing before killing them off.
-
 command_timeout=60
-
-
 
 # WEEK RANDOM SEED OPTION
 # This directive allows you to use SSL even if your system does not have
@@ -135,26 +110,7 @@ command_timeout=60
 # or $HOME/.rnd. If neither exists, the pseudo random number generator will
 # be initialized and a warning will be issued.
 # Values: 0=only seed from /dev/[u]random, 1=also seed from weak randomness
-
 #allow_weak_random_seed=1
-
-
-
-# INCLUDE CONFIG FILE
-# This directive allows you to include definitions from an external config file.
-
-#include=<somefile.cfg>
-
-
-
-# INCLUDE CONFIG DIRECTORY
-# This directive allows you to include definitions from config files (with a
-# .cfg extension) in one or more directories (with recursion).
-
-#include_dir=<somedirectory>
-#include_dir=<someotherdirectory>
-
-
 
 # COMMAND DEFINITIONS
 # Command definitions that this daemon will run.  Definitions
@@ -174,29 +130,29 @@ command_timeout=60
 # directory.  Also note that you will have to modify the definitions below
 # to match the argument format the plugins expect.  Remember, these are
 # examples only!
-
 # The following examples use hardcoded command arguments...
 
-command[check_users]=<%= @nagiosplugins %>/check_users -w 10 -c 20
-#command[check_load]=<%= @nagiosplugins %>/check_load -w 15,10,5 -c 30,25,20
-#command[check_disk1]=<%= @nagiosplugins %>/check_disk -w 20 -c 10 -p /dev/hda1
-#command[check_disk2]=<%= @nagiosplugins %>/check_disk -w 20 -c 10 -p /dev/hdb1
-command[check_zombie_procs]=<%= @nagiosplugins %>/check_procs -w 5 -c 10 -s Z
-#command[check_total_procs]=<%= @nagiosplugins %>/check_procs -w 150 -c 200 
+command[check_users]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_users -w 10 -c 20
+#command[check_load]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_load -w 15,10,5 -c 30,25,20
+#command[check_disk1]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_disk -w 20 -c 10 -p /dev/hda1
+#command[check_disk2]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_disk -w 20 -c 10 -p /dev/hdb1
+command[check_zombie_procs]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_procs -w 5 -c 10 -s Z
+#command[check_total_procs]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_procs -w 150 -c 200 
 
 # The following examples allow user-supplied arguments and can
 # only be used if the NRPE daemon was compiled with support for 
 # command arguments *AND* the dont_blame_nrpe directive in this
 # config file is set to '1'...
 
-#command[check_users]=<%= @nagiosplugins %>/check_users -w $ARG1$ -c $ARG2$
-#command[check_load]=<%= @nagiosplugins %>/check_load -w $ARG1$ -c $ARG2$
-#command[check_disk]=<%= @nagiosplugins %>/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
-#command[check_procs]=<%= @nagiosplugins %>/check_procs -w $ARG1$ -c $ARG2$ -s $ARG3$
+#command[check_users]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_users -w $ARG1$ -c $ARG2$
+#command[check_load]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_load -w $ARG1$ -c $ARG2$
+#command[check_disk]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
+#command[check_procs]=<%= scope.lookupvar('icinga::params::nagiosplugins') %>/check_procs -w $ARG1$ -c $ARG2$ -s $ARG3$
 
-#
-# local configuration:
-#	if you'd prefer, you can instead place directives here
-#include=<%= scope.lookupvar("nrpecfg_local") %>
-include_dir=<%= scope.lookupvar("icinga::params::nrpe_dir") %>
-
+# INCLUDE CONFIG FILE
+# This directive allows you to include definitions from an external config file.
+#include=<%= scope.lookupvar('icinga::params::nrpecfg_local') %>
+# INCLUDE CONFIG DIRECTORY
+# This directive allows you to include definitions from config files (with a
+# .cfg extension) in one or more directories (with recursion).
+include_dir=<%= scope.lookupvar('icinga::params::nrpe_dir') %>

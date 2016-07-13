@@ -61,6 +61,7 @@ define icinga::object::nrpe_service (
     ensure       => $ensure,
     tag          => 'icinga',
     sudo         => $sudo,
+    notify       => Service[$icinga::params::nrpe_service]
   }
 
   icinga::object::service { "icinga::${cmd_real}_${host_name}":
@@ -68,18 +69,18 @@ define icinga::object::nrpe_service (
     service_description           => $service_description,
     servicegroups    => $servicegroups,
     is_volatile      => $is_volatile,
+    check_period     => $check_period,
     check_command    => "check_nrpe_1arg!${cmd_real}",
+    check_freshness  => $check_freshness,
+    event_handler    => $event_handler,
     max_check_attempts            => $max_check_attempts,
     normal_check_interval         => $normal_check_interval,
     retry_check_interval          => $retry_check_interval,
     active_checks_enabled         => $active_checks_enabled,
     passive_checks_enabled        => $passive_checks_enabled,
-    check_period     => $check_period,
     parallelize_check             => $parallelize_check,
     obsess_over_service           => $obsess_over_service,
-    check_freshness  => $check_freshness,
     freshness_threshold           => $freshness_threshold,
-    event_handler    => $event_handler,
     event_handler_enabled         => $event_handler_enabled,
     low_flap_threshold            => $low_flap_threshold,
     high_flap_threshold           => $high_flap_threshold,
@@ -101,6 +102,5 @@ define icinga::object::nrpe_service (
     multiple_insertin             => $multiple_insertin,
     ensure           => $ensure,
     tag              => 'icinga',
-    notify           => Service[$icinga::monitored::server_nrpe::nrpe_service]
   }
 }

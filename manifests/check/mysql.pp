@@ -1,4 +1,3 @@
-
 class icinga::check::mysql {
   icinga::service { "${fqdn}_mysql":
     service_description  => 'MYSQL',

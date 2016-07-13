@@ -1,57 +1,16 @@
 class icinga::monitored::server_nrpe ($ensure = 'present') {
+  include icinga::params
+
   class { 'icinga::monitored::server': }
-  $nrpe_service = $::operatingsystem ? {
-    'FreeBSD' => 'nrpe2',
-    'Darwin'  => 'org.macports.nrpe',
-    default   => 'nagios-nrpe-server',
-  }
-  $nrpe_package = $operatingsystem ? {
-    'FreeBSD' => 'nrpe2',
-    'Darwin'  => 'nrpe',
-    default   => 'nagios-nrpe-server',
-  }
-  $nagios_user = $::operatingsystem ? {
-    'Darwin' => 'daemon',
-    default  => 'nagios',
-  }
-  $nagios_group = $::operatingsystem ? {
-    'Darwin' => 'daemon',
-    default  => 'nagios',
-  }
-  $nagiosconf = $::operatingsystem ? {
-    'FreeBSD' => '/usr/local/etc/nagios',
-    'Darwin'  => '/opt/local/etc/nrpe',
-    default   => '/etc/nagios',
-  }
-  $nrpebin = $::operatingsystem ? {
-    'FreeBSD' => '/usr/local/sbin/nrpe2',
-    'Darwin'  => '/opt/local/sbin/nrpe',
-    default   => '/usr/sbin/nrpe',
-  }
-  $nagiosplugins = $::operatingsystem ? {
-    'FreeBSD' => '/usr/local/libexec/nagios',
-    'Darwin'  => '/opt/local/libexec/nagios',
-    default   => '/usr/lib/nagios/plugins',
-  }
-  $nrpecfg = $::operatingsystem ? {
-    'FreeBSD' => '/usr/local/etc/nrpe.cfg',
-    'Darwin'  => '/opt/local/etc/nrpe/nrpe.cfg',
-    default   => '/etc/nagios/nrpe.cfg',
-  }
-  $nrpecfg_local = $::operatingsystem ? {
-    'FreeBSD' => '/usr/local/etc/nrpe_local.cfg',
-    'Darwin'  => '/opt/local/etc/nrpe/nrpe_local.cfg',
-    default   => '/etc/nagios/nrpe_local.cfg',
-  }
 
   File {
-    require => Package[$nrpe_package] }
+    require => Package[$icinga::params::nrpe_package] }
 
   file {
-    $nrpecfg:
+    $icinga::params::nrpecfg:
       content => template('icinga/nrpe.cfg.erb');
 
-    $nrpecfg_local:
+    $icinga::params::nrpecfg_local:
     ;
   }
 
@@ -66,7 +25,7 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
     }
   }
 
-  package { $nrpe_package: ensure => installed, }
+  package { $icinga::params::nrpe_package: ensure => installed, }
 
   case $::operatingsystem {
     'Debian', 'Ubuntu' : {
@@ -79,42 +38,35 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
 
   file { "${nagiosconf}/nrpe.d":
     ensure => 'directory',
-    owner  => $nagios_user,
-    group  => $nagios_group,
+    owner  => $icinga::params::nagios_user,
+    group  => $icinga::params::nagios_group,
   }
 
   #  exec { 'generate-nrpe.cfg':
   #    command     => "cat ${nagiosconf}/nrpe.d/* >${nagiosconf}/nrpe_local.cfg",
   #    refreshonly => true,
   #    subscribe   => File["${nagiosconf}/nrpe.d"],
-  #    notify      => Service[$nrpe_service],
+  #    notify      => Service[$icinga::params::nrpe_service],
   #  }
 
-  service { $nrpe_service:
+  service { $icinga::params::nrpe_service:
     ensure     => running,
     enable     => true,
     hasrestart => true,
     hasstatus  => false,
     pattern    => '/usr/sbin/nrpe.*',
-    require    => Package[$nrpe_package],
-    subscribe  => [File["${nagiosconf}/nrpe.d"], File["${nrpecfg}"], File["${nrpecfg_local}"]],
+    require    => Package[$icinga::params::nrpe_package],
+    subscribe  => [
+      File["${icinga::params::nrpecfg}"],
+      File["${icinga::params::nrpecfg_local}"]],
   }
 
-  # add apt nrpe service
-  #  icinga::nrpe_plugin { "${fqdn}_check_nfs_stale":
-  #    command_name         => "check_nfs_stale",
-  #    service_description  => "NFS_STALE",
-  #    notification_period  => "workhours",
-  #    notification_options => "w,c,u",
-  #    ensure               => $kernel ? {
-  #      "FreeBSD" => "absent",
-  #      default   => "present"
-  #    }
   #  }
   $swap_present = $swapsize ? {
     '0.00 MB' => 'absent',
     ''        => 'absent',
-    default   => $presence ? {
+    undef     => 'absent',
+    default   => $ensure ? {
       'absent' => 'absent',
       default  => 'present'
     } }
@@ -122,7 +74,7 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
   icinga::object::nrpe_service {
     "${fqdn}_nrpe_swap":
       command_name         => 'check_swap',
-      command_line         => "${nagiosplugins}/check_swap -w 3% -c 1%",
+      command_line         => "${icinga::params::nagiosplugins}/check_swap -w 3% -c 1%",
       service_description  => 'SWAP',
       notification_options => 'w,c,u',
       servicegroups        => 'Harddrives,Memory',
@@ -130,7 +82,7 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
 
     "${fqdn}_check_diskspace":
       command_name          => 'check_diskspace',
-      command_line          => "${nagiosplugins}/check_disk -l -X devfs -X linprocfs -X devpts -X tmpfs -X usbfs -X procfs -X proc -X sysfs -X iso9660 -X debugfs -X binfmt_misc -X udf -X devtmpfs -X securityfs -X fusectl -w 10% -c 5%",
+      command_line          => "${icinga::params::nagiosplugins}/check_disk -l -X devfs -X linprocfs -X devpts -X tmpfs -X usbfs -X procfs -X proc -X sysfs -X iso9660 -X debugfs -X binfmt_misc -X udf -X devtmpfs -X securityfs -X fusectl -w 10% -c 5%",
       service_description   => 'DISKSPACE',
       notification_period   => 'workhours',
       notification_interval => '1440',
@@ -159,7 +111,7 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
 
   icinga::object::nrpe_service { "${fqdn}_nrpe_processes":
     command_name         => 'check_procs',
-    command_line         => "${nagiosplugins}/check_procs -w ${procs_warn} -c ${procs_crit}",
+    command_line         => "${icinga::params::nagiosplugins}/check_procs -w ${procs_warn} -c ${procs_crit}",
     service_description  => 'RUNNING_PROCS',
     notification_period  => 'workhours',
     notification_options => 'w,c,u',
@@ -175,7 +127,7 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
   icinga::object::nrpe_service { "${fqdn}_nrpe_load":
     service_description  => 'LOAD',
     command_name         => 'check_load',
-    command_line         => "${nagiosplugins}/check_load -w ${warn_one},${warn_five},${warn_fifteen} -c ${crit_one},${crit_five},${crit_fifteen}",
+    command_line         => "${icinga::params::nagiosplugins}/check_load -w ${warn_one},${warn_five},${warn_fifteen} -c ${crit_one},${crit_five},${crit_fifteen}",
     notification_options => 'w,c,u',
     ensure               => $ensure,
   }

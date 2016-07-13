@@ -44,4 +44,43 @@ class icinga::params {
     owner => $owner,
     group => $group,
   }
-}
+
+  $nrpe_service = $::operatingsystem ? {
+    'FreeBSD' => 'nrpe2',
+    'Darwin'  => 'org.macports.nrpe',
+    default   => 'nagios-nrpe-server',
+  }
+  $nrpe_package = $::operatingsystem ? {
+    'FreeBSD' => 'nrpe2',
+    'Darwin'  => 'nrpe',
+    default   => 'nagios-nrpe-server',
+  }
+  $nagios_user = $::operatingsystem ? {
+    'Darwin' => 'daemon',
+    default  => 'nagios',
+  }
+  $nagios_group = $::operatingsystem ? {
+    'Darwin' => 'daemon',
+    default  => 'nagios',
+  }
+  $nagiosconf = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/nagios',
+    'Darwin'  => '/opt/local/etc/nrpe',
+    default   => '/etc/nagios',
+  }
+  $nrpebin = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/sbin/nrpe2',
+    'Darwin'  => '/opt/local/sbin/nrpe',
+    default   => '/usr/sbin/nrpe',
+  }
+
+  $nrpecfg = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/nrpe.cfg',
+    'Darwin'  => '/opt/local/etc/nrpe/nrpe.cfg',
+    default   => '/etc/nagios/nrpe.cfg',
+  }
+  $nrpecfg_local = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/nrpe_local.cfg',
+    'Darwin'  => '/opt/local/etc/nrpe/nrpe_local.cfg',
+    default   => '/etc/nagios/nrpe_local.cfg',
+  } }
