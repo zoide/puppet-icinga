@@ -37,12 +37,18 @@ class icinga::params {
   # legacy
   $nagiosplugins = $pluginsdir
 
-  $owner = 'nagios'
-  $group = 'nagios'
+  $nagios_user = $::operatingsystem ? {
+    'Darwin' => 'daemon',
+    default  => 'nagios',
+  }
+  $nagios_group = $::operatingsystem ? {
+    'Darwin' => 'daemon',
+    default  => 'nagios',
+  }
 
   File {
-    owner => $owner,
-    group => $group,
+    owner => $nagios_user,
+    group => $nagios_group,
   }
 
   $nrpe_service = $::operatingsystem ? {
@@ -55,14 +61,7 @@ class icinga::params {
     'Darwin'  => 'nrpe',
     default   => 'nagios-nrpe-server',
   }
-  $nagios_user = $::operatingsystem ? {
-    'Darwin' => 'daemon',
-    default  => 'nagios',
-  }
-  $nagios_group = $::operatingsystem ? {
-    'Darwin' => 'daemon',
-    default  => 'nagios',
-  }
+
   $nagiosconf = $::operatingsystem ? {
     'FreeBSD' => '/usr/local/etc/nagios',
     'Darwin'  => '/opt/local/etc/nrpe',
@@ -83,4 +82,9 @@ class icinga::params {
     'FreeBSD' => '/usr/local/etc/nrpe_local.cfg',
     'Darwin'  => '/opt/local/etc/nrpe/nrpe_local.cfg',
     default   => '/etc/nagios/nrpe_local.cfg',
+  }
+
+  $sudobin = $::kernel ? {
+    'FreeBSD' => '/usr/local/bin/sudo',
+    default   => '/usr/bin/sudo',
   } }
