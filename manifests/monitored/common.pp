@@ -19,22 +19,27 @@ class icinga::monitored::common ($ensure = 'present') inherits icinga::client {
     ensure              => 'absent'
   }
 
-  case $::kernel {
-    'Linux' : { $apt_present = 'present' }
-    default : { $apt_present = 'absent' }
-  }
-
   if defined(Class['icinga::monitored::server_nrpe']) {
-    icinga::object::nrpe_service { "${::fqdn}_nrpe_apt":
-      command_name          => 'check_apt',
-      command_line          => '/usr/lib/nagios/plugins/check_apt',
-      service_description   => 'APT',
-      normal_check_interval => '1440',
-      notification_interval => '50400',
-      notification_period   => 'workhours',
-      notification_options  => 'w,c',
-      notifications_enabled => '0',
-      ensure                => 'absent',
+    icinga::object::nrpe_service {
+      "${::fqdn}_nrpe_apt":
+        command_name          => 'check_apt',
+        command_line          => '/usr/lib/nagios/plugins/check_apt',
+        servicegroups         => 'Packages',
+        service_description   => 'APT',
+        check_interval => '14400',
+        notification_interval => '50400',
+        notification_period   => 'workhours',
+        notification_options  => 'w,c';
+
+      "${::fqdn}_nrpe_apt-distupgrade":
+        command_name          => 'check_apt_distupgrade',
+        command_line          => '/usr/lib/nagios/plugins/check_apt -d',
+        servicegroups         => 'Packages',
+        service_description   => 'APT',
+        check_interval => '14400',
+        notification_interval => '50400',
+        notification_period   => 'workhours',
+        notification_options  => 'w,c';
     }
 
     icinga::object::nrpe_command { 'check_disk':

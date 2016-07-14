@@ -3,14 +3,12 @@ class icinga::master::actions inherits icinga::params {
     notify      => Service['icinga'],
     refreshonly => true,
     logoutput   => true,
-    user        => 'nagios',
+    user        => 'root',
   }
 
-  exec { 'actions::update-unique-service-checks':
-    command => "${icinga::params::scripts_dir}/unique_checks.rb ${icinga::params::service_collects} ${icinga::params::services_dir}",
+  exec { 'actions::update-unique-service-checks': command => "${icinga::params::scripts_dir}/unique_checks.rb ${icinga::params::service_collects} ${icinga::params::services_dir}", 
   }
 
-  exec { 'actions::generate-hostgroup-membership':
-    command => "${icinga::params::scripts_dir}/generate_hostgroups.rb ${icinga::params::hostgroup_collects} ${icinga::params::hosts_dir}",
+  exec { 'actions::generate-hostgroup-membership': command => "${icinga::params::scripts_dir}/generate_hostgroups.rb ${icinga::params::hostgroup_collects} ${icinga::params::hosts_dir}", 
   }
 }

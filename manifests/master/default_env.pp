@@ -3,35 +3,21 @@ class icinga::master::default_env {
     ensure => $ensure, }
 
   icinga::object::hostgroup {
-    [
-      'Debian',
-      'Ubuntu',
-      'FreeBSD',
-      'Darwin',
-      'debian',
-      'ubuntu',
-      'freebsd',
-      'darwin']:
+    ['Debian',]:
     ;
 
     [
       'physical',
-      'xenu',
-      'xen0',
       'kvm',
       'vpn',
-      'lxc']:
+      ]:
     ;
 
-    [
-      'ppc',
-      'amd64',
-      'i386',
-      'x86_64']:
+    ['amd64',]:
     ;
   }
 
-  icinga::object::servicegroup { ['Packages', 'DNS', 'Harddrives', 'Backup', 'Memory']: }
+  icinga::object::servicegroup { ['Packages', 'DNS', 'Harddrives', 'Backup', 'Memory', 'Mail']: }
 
   # #some additional commands
   icinga::object::command {
@@ -46,7 +32,6 @@ class icinga::master::default_env {
 
     'check-nfsv3-tcp':
       command_line => '$USER1$/check_rpc -H $HOSTADDRESS$ -C nfs -t -c2,3';
-
 
     'check-rpc-tcp':
       command_line => '$USER1$/check_rpc -H $HOSTADDRESS$ -C $ARG1$ -t';
