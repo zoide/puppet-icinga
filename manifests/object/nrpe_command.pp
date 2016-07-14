@@ -8,8 +8,6 @@ define icinga::object::nrpe_command ($command_line, $command_name = '', $ensure 
   if $sudo {
     require sudo
 
-    notify { 'icinga::sudo': message => "nagios ALL=(ALL:ALL) NOPASSWD: ${command_line}" }
-
     sudo::directive { "icinga::sudo_${::hostname}_${cmd_real}":
       ensure  => $ensure,
       content => "nagios ALL=(ALL:ALL) NOPASSWD: ${command_line}",
