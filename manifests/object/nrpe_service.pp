@@ -34,7 +34,6 @@ define icinga::object::nrpe_service (
   $notification_period           = '24x7',
   $notification_options          = 'w,u,c',
   $notifications_enabled         = '1',
-  $contact_groups  = false,
   $stalking_options              = '',
   $dependent_service_description = false,
   $inherits_parent = '1',
@@ -43,12 +42,13 @@ define icinga::object::nrpe_service (
   $multiple_values_array         = '',
   $multiple_insertin             = '',
   $service_template              = false,
+  $contact_groups  = false,
   $ensure          = 'present',
   $subdir          = 'services',
   $base_path       = '',
   $register        = false,
   $action_url      = false,
-  $sudo            = false) {
+  $sudo            = 'absent') {
   include icinga::params
   $cmd_real = $command_name ? {
     ''      => $name,

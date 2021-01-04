@@ -4,9 +4,9 @@ class icinga::check::mysql {
     check_command        => 'check_mysql',
     notification_options => 'w,c,u',
   }
-  $nagioshost = gethostname($NAGIOS_HOST)
+  $icingahost = gethostname($::icinga_host)
 
-  mysql_user { "nagios@${nagioshost}":
+  mysql_user { "nagios@${icingahost}":
     ensure        => 'present',
     password_hash => ''
   }

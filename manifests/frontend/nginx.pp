@@ -35,6 +35,9 @@ class icinga::frontend::nginx ($server_name = undef) {
       '/images']:
       location_alias => "${ic_root}/images";
 
+    '/icinga/jquery':
+      location_alias => "${ic_root}/jquery";
+
     '/icinga/jquery-ui':
       location_alias => "${ic_root}/jquery-ui";
 
@@ -46,19 +49,17 @@ class icinga::frontend::nginx ($server_name = undef) {
       index_files => ['index.html'];
 
     '~ /icinga/(.*)\.cgi$':
-      rewrite_rules        => ['^/icinga/cgi-bin/(.*)\.cgi /$1.cgi break', '^/cgi-bin/icinga/(.*)\.cgi /$1.cgi break'],
-      fastcgi              => 'unix:/var/run/fcgiwrap.socket',
-      www_root             => '/usr/lib/cgi-bin/icinga',
-      index_files          => ['index.php'],
-      auth_basic           => 'Monime',
-      auth_basic_user_file => '/etc/nginx/auth_basic.user',
-      raw_append           => [
+      rewrite_rules       => ['^/icinga/cgi-bin/(.*)\.cgi /$1.cgi break', '^/cgi-bin/icinga/(.*)\.cgi /$1.cgi break'],
+      fastcgi             => 'unix:/var/run/fcgiwrap.socket',
+      www_root            => '/usr/lib/cgi-bin/icinga',
+      index_files         => ['index.php'],
+      raw_append          => [
         'fastcgi_index index.php;',
         'fastcgi_param    SCRIPT_FILENAME    $document_root$fastcgi_script_name;',
         'fastcgi_param    AUTH_USER          $remote_user;',
         'fastcgi_param    REMOTE_USER        $remote_user;',
         ],
-      location_cfg_append  => {
+      location_cfg_append => {
         fastcgi_connect_timeout => '3m',
         fastcgi_read_timeout    => '3m',
         fastcgi_send_timeout    => '3m'
