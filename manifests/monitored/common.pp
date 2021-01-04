@@ -22,6 +22,7 @@ class icinga::monitored::common ($ensure = 'present') inherits icinga::client {
   if defined(Class['icinga::monitored::server_nrpe']) {
     icinga::object::nrpe_service {
       "${::fqdn}_nrpe_apt":
+	ensure 		   => 'absent',
         command_name          => 'check_apt',
         command_line          => '/usr/lib/nagios/plugins/check_apt',
         servicegroups         => 'Packages',
@@ -32,6 +33,7 @@ class icinga::monitored::common ($ensure = 'present') inherits icinga::client {
         notification_options  => 'w,c';
 
       "${::fqdn}_nrpe_apt-distupgrade":
+	ensure 		   => 'absent',
         command_name          => 'check_apt_distupgrade',
         command_line          => '/usr/lib/nagios/plugins/check_apt -d',
         servicegroups         => 'Packages',

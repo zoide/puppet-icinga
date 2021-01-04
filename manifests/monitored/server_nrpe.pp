@@ -29,7 +29,11 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
 
   case $::operatingsystem {
     'Debian', 'Ubuntu' : {
+      if $::lsbdistcodename == 'buster' {
+      package { ['monitoring-plugins', 'monitoring-plugins-standard', 'monitoring-plugins-basic']: ensure => $ensure, }
+      } else {
       package { ['nagios-plugins', 'nagios-plugins-standard', 'nagios-plugins-basic']: ensure => $ensure, }
+      }
     }
     'Darwin'           : {
       package { 'nagios-plugins': ensure => $ensure, }
@@ -106,8 +110,8 @@ class icinga::monitored::server_nrpe ($ensure = 'present') {
     ''      => 1,
     default => $processorcount,
   }
-  $procs_warn = $processorcount_real * 100
-  $procs_crit = $processorcount_real * 150
+  $procs_warn = $processorcount_real * 150
+  $procs_crit = $processorcount_real * 200 
 
   icinga::object::nrpe_service { "${fqdn}_nrpe_processes":
     command_name         => 'check_procs',
